@@ -78,16 +78,16 @@
                 console.log('Success:', data);
                 // Re-fetch all coordinates including the new one to update the map
                 fetch(serverAddress)
-					.then(response => response.json())
-					.then(data => {
-						for (var i = 0; i < data.length; i++) {
-							if (i>visitorCoordinates.length-1) {
-							    visitorCoordinates.push(data[i]);
-							}
-							loadMarkers(visitorCoordinates[i]);
-						}
-						document.getElementById('visitorCount').textContent = visitorCoordinates.length;
-					})
+		.then(response => response.json())
+		.then(data => {
+			for (var i = 0; i < data.length; i++) {
+				if (i>visitorCoordinates.length-1) {
+				    visitorCoordinates.push(data[i]);
+				}
+				loadMarkers(visitorCoordinates[i]);
+			}
+			document.getElementById('visitorCount').textContent = visitorCoordinates.length;
+		})
                 .catch(error => {
                     console.error('Error re-fetching updated coordinates:', error);
                 });
