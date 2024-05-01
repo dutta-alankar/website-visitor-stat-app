@@ -21,6 +21,7 @@ block_unknown_client = True
 
 database_loc  = '/home/alankardutta/mysite'
 database_name = 'database-coords.pickle'
+database_ips = 'database-ips.pickle'
 
 def check_ip(f):
     @wraps(f)
@@ -48,21 +49,33 @@ def get_coordinates():
 def receive_coordinates():
     data = request.get_json()  # Parse the JSON from the request body
     coordinates = data.get('coordinates')
+    ip_addr = data.get('ip')
     if coordinates is None:
         return jsonify({'status': 'error', 'message': 'No coordinates provided'}), 400
+    if ip_addr is None:
+        return jsonify({'status': 'error', 'message': 'No IP provided'}), 400
 
     print("Received coordinates:", coordinates)
+    print("Received ip:", ip_addr)
     try:
        with open(f'{database_loc}/{database_name}', 'rb') as handle:
            visitorCoordinates = pickle.load(handle)
     except:
         visitorCoordinates = []
-    if coordinates not in visitorCoordinates:
+    try:
+       with open(f'{database_loc}/{database_ips}', 'rb') as handle:
+           all_ips = pickle.load(handle)
+    except:
+        all_ips = [] 
+    if ip_addr not in all_ips:
         visitorCoordinates.append(coordinates)
+        all_ips.append(ip_addr)
         with open(f'{database_loc}/{database_name}', 'wb') as handle:
             pickle.dump(visitorCoordinates, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open(f'{database_loc}/{database_ips}', 'wb') as handle:
+            pickle.dump(all_ips, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    return jsonify({'status': 'success', 'message': f'Coordinates {coordinates} received by server successfully'}), 200
+    return jsonify({'status': 'success', 'message': f'Coordinates {coordinates} with IP {ip_addr} received by server successfully'}), 200
 
 @app.route('/')
 def info():
