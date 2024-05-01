@@ -14,8 +14,8 @@
 
     <script>
 	 // Initialize the visitor coordinates
-	var visitorCoordinates = [ ];
-	const serverAddress = 'https://alankardutta.pythonanywhere.com/api/coordinates'
+        var visitorCoordinates = [ ];
+        const serverAddress = 'https://alankardutta.pythonanywhere.com/api/coordinates'
 
         // Initialize the map
         var map = L.map('map').setView([23, 30], 2);
@@ -35,11 +35,11 @@
             fetch(serverAddress)
                 .then(response => response.json())
                 .then(data => {
-					for (var i = 0; i < data.length; i++) {
-					    visitorCoordinates.push(data[i]);
+                    for (var i = 0; i < data.length; i++) {
+                        visitorCoordinates.push(data[i]);
                         loadMarkers(visitorCoordinates[i]);
                     }
-					document.getElementById('visitorCount').textContent = visitorCoordinates.length;
+                    document.getElementById('visitorCount').textContent = visitorCoordinates.length;
                     fetchGeoLocation();  // Get new geolocation and update server after initial fetch
                 })
                 .catch(error => {
@@ -80,13 +80,13 @@
                 fetch(serverAddress)
 		.then(response => response.json())
 		.then(data => {
-			for (var i = 0; i < data.length; i++) {
-				if (i>visitorCoordinates.length-1) {
-				    visitorCoordinates.push(data[i]);
-				}
-				loadMarkers(visitorCoordinates[i]);
-			}
-			document.getElementById('visitorCount').textContent = visitorCoordinates.length;
+                    for (var i = 0; i < data.length; i++) {
+                        if (i>visitorCoordinates.length-1) {
+                            visitorCoordinates.push(data[i]);
+                        }
+                        loadMarkers(visitorCoordinates[i]);
+                    }
+                    document.getElementById('visitorCount').textContent = visitorCoordinates.length;
 		})
                 .catch(error => {
                     console.error('Error re-fetching updated coordinates:', error);
