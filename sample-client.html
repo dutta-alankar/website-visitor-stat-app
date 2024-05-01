@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Map</title>
+    <!-- Include Leaflet.js library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    <div id="map" style="height: 400px;"></div>
+    <p>Total Visitors: <span id="visitorCount">0</span></p>
+
+    <script>
+	    // Initialize the visitor coordinates
+		var visitorCoordinates = [ ];
+
+        // Initialize the map
+        var map = L.map('map').setView([23, 30], 2);
+
+        // Add a tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Function to load markers on the map
+        function loadMarkers(coord) {
+            L.marker(coord).addTo(map);
+        }
+
+        // Function to fetch initial coordinates from the server
+        function fetchInitialCoordinates() {
+            fetch('https://alankardutta.pythonanywhere.com/api/coordinates')
+                .then(response => response.json())
+                .then(data => {
+					for (var i = 0; i < data.length; i++) {
+					    visitorCoordinates.push(data[i]);
+                        loadMarkers(visitorCoordinates[i]);
+                    }
+					document.getElementById('visitorCount').textContent = visitorCoordinates.length;
+                    fetchGeoLocation();  // Get new geolocation and update server after initial fetch
+                })
+                .catch(error => {
+                    console.error('Error fetching initial coordinates:', error);
+                });
+        }
+
+        // Function to get geolocation and send to the server
+        function fetchGeoLocation() {
+            fetch('http://ip-api.com/json/')
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        var newCoord = [data.lat, data.lon];
+                        sendCoordinatesToServer(newCoord);
+                    } else {
+                        console.error("Failed to fetch geolocation: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching the API:', error);
+                });
+        }
+
+        // Function to send coordinates to the server
+        function sendCoordinatesToServer(newCoord) {
+            fetch('https://alankardutta.pythonanywhere.com/api/coordinates', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ coordinates: newCoord })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                // Re-fetch all coordinates including the new one to update the map
+                fetch('https://alankardutta.pythonanywhere.com/api/coordinates')
+					.then(response => response.json())
+					.then(data => {
+						for (var i = 0; i < data.length; i++) {
+							if (i>visitorCoordinates.length-1) {
+							    visitorCoordinates.push(data[i]);
+							}
+							loadMarkers(visitorCoordinates[i]);
+						}
+						document.getElementById('visitorCount').textContent = visitorCoordinates.length;
+					})
+                .catch(error => {
+                    console.error('Error re-fetching updated coordinates:', error);
+                });
+            })
+            .catch(error => {
+                console.error('Error sending coordinates:', error);
+            });
+        }
+
+        // On page load, fetch initial coordinates
+        window.onload = function() {
+            fetchInitialCoordinates();
+        };
+    </script>
+</body>
+</html>
