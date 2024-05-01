@@ -15,6 +15,7 @@
     <script>
 	    // Initialize the visitor coordinates
 		var visitorCoordinates = [ ];
+		const serverAddress = 'https://alankardutta.pythonanywhere.com/api/coordinates'
 
         // Initialize the map
         var map = L.map('map').setView([23, 30], 2);
@@ -31,7 +32,7 @@
 
         // Function to fetch initial coordinates from the server
         function fetchInitialCoordinates() {
-            fetch('https://alankardutta.pythonanywhere.com/api/coordinates')
+            fetch(serverAddress)
                 .then(response => response.json())
                 .then(data => {
 					for (var i = 0; i < data.length; i++) {
@@ -65,7 +66,7 @@
 
         // Function to send coordinates to the server
         function sendCoordinatesToServer(newCoord) {
-            fetch('https://alankardutta.pythonanywhere.com/api/coordinates', {
+            fetch(serverAddress, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -76,7 +77,7 @@
             .then(data => {
                 console.log('Success:', data);
                 // Re-fetch all coordinates including the new one to update the map
-                fetch('https://alankardutta.pythonanywhere.com/api/coordinates')
+                fetch(serverAddress)
 					.then(response => response.json())
 					.then(data => {
 						for (var i = 0; i < data.length; i++) {
