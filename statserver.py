@@ -87,7 +87,7 @@ def receive_coordinates():
 def receive_geo_info():
     data = request.get_json()  # Parse the JSON from the request body
     ip_addr = data.get('ip')
-    if ip == '' or ip is None:
+    if ip_addr == '' or ip_addr is None:
         return jsonify({'status': 'error', 'message': 'No ip sent to query geo-location'}), 400
     reply = requests.get(f'http://ip-api.com/json/{ip_addr}').json()
     if reply is None:
