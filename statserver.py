@@ -100,6 +100,23 @@ def receive_geo_info():
                     'org': reply['org'],
                     'city': reply['city']}), 200
 
+@app.route('/api/get-stats', methods=['GET'])
+@check_ip
+def send_visitor_info():
+    try:
+       with open(f'{database_loc}/{database_name}', 'rb') as handle:
+           visitorCoordinates = pickle.load(handle)
+    except:
+        visitorCoordinates = []
+    try:
+       with open(f'{database_loc}/{database_ips}', 'rb') as handle:
+           ip_info = pickle.load(handle)
+    except:
+        ip_info = []
+
+    return jsonify({'ips': ip_info,
+                    'visitor coordinates': visitorCoordinates,}), 200
+
 @app.route('/')
 def info():
     return 'Website visitor stat server!'
