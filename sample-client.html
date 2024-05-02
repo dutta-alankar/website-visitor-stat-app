@@ -36,6 +36,7 @@
 
         // Function to fetch initial coordinates from the server
         function fetchInitialCoordinates() {
+	    fetchIP(); // fetch the visitor ip
             fetch(serverAddress)
                 .then(response => response.json())
                 .then(data => {
@@ -49,7 +50,6 @@
                 .catch(error => {
                     console.error('Error fetching initial coordinates:', error);
                 });
-            fetchIP(); // fetch the visitor ip
         }
 		
         // Function to get IP address of visitor
