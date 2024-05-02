@@ -87,10 +87,11 @@ def receive_coordinates():
 def receive_geo_info():
     data = request.get_json()  # Parse the JSON from the request body
     ip_addr = data.get('ip')
+    if ip == '' or ip is None:
+        return jsonify({'status': 'error', 'message': 'No ip sent to query geo-location'}), 400
     reply = requests.get(f'http://ip-api.com/json/{ip_addr}').json()
     if reply is None:
         return jsonify({'status': 'error', 'message': 'No coordinates provided'}), 400
-
     print("Received coordinates:", reply)
 
     return jsonify({'status': reply['status'], 
