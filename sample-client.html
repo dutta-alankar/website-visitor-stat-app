@@ -35,10 +35,13 @@
         }
 
         // Function to fetch initial coordinates from the server
-        function fetchInitialCoordinates() {
-	    fetchIP()
-                .then(() => {  // Ensuring IP is fetched before fetching initial coordinates and geolocation
-            fetch(serverAddress)
+        function fetchMapCoordinates() {
+	    fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => { 
+                // Ensuring IP is fetched before fetching geolocation  
+                visitor_IP = data.ip;
+                fetch(serverAddress)
                 .then(response => response.json())
                 .then(data => {
                     for (var i = 0; i < data.length; i++) {
@@ -51,18 +54,9 @@
                 .catch(error => {
                     console.error('Error fetching initial coordinates:', error);
                 });
-		});
-        }
-		
-        // Function to get IP address of visitor
-        function fetchIP() {
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => {
-                    visitor_IP = data.ip;
-                })
-                .catch(error => {
-                    console.error('Error fetching the API:', error);
+            })
+            .catch(error => {
+                console.error('Error fetching the IP query API:', error);
             });
         }
 
@@ -72,19 +66,19 @@
                                    method: 'POST',
                                    headers: { 'Content-Type': 'application/json' },
                                    body: JSON.stringify({ ip: visitor_IP })
-            })
+                                  })
             .then(response => response.json())
             .then(data => {
-                    if(data.status === 'success') {
-                        var newCoord = [data.lat, data.lon];
-                        sendCoordinatesToServer(newCoord, data.org, data.city);
-                    } else {
-                        console.error("Failed to fetch geolocation: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching the API:', error);
-                });
+                if(data.status === 'success') {
+                    var newCoord = [data.lat, data.lon];
+                    sendCoordinatesToServer(newCoord, data.org, data.city);
+                } else {
+                    console.error("Failed to fetch geolocation: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching the API:', error);
+            });
         }
 
         // Function to send coordinates to the server
@@ -96,7 +90,7 @@
                                                          ip: visitor_IP,
                                                          org: org,
                                                          city: city
-                                                       })
+                                 })
             })
             .then(response => response.json())
             .then(data => {
@@ -112,10 +106,10 @@
                         loadMarkers(visitorCoordinates[i]);
                     }
                     document.getElementById('visitorCount').textContent = visitorCoordinates.length;
-		    })
-            .catch(error => {
+                })
+                .catch(error => {
                     console.error('Error re-fetching updated coordinates:', error);
-            });
+                });
             })
             .catch(error => {
                 console.error('Error sending coordinates:', error);
@@ -124,8 +118,8 @@
 
         // On page load, fetch initial coordinates
         window.onload = function() {
-            fetchInitialCoordinates();
-        };
+            fetchMapCoordinates();
+        }
     </script>
 </body>
 </html>
