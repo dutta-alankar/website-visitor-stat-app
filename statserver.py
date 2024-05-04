@@ -79,12 +79,14 @@ def receive_coordinates():
         ip_info.append([ip_addr, org, city])
         if os.path.exists(f'{database_loc}/backup_{database_name}'):
             os.remove(f'{database_loc}/backup_{database_name}')
-        shutil.copyfile(f'{database_loc}/{database_name}', f'{database_loc}/backup_{database_name}')
+        if os.path.exists(f'{database_loc}/{database_name}'):
+            shutil.copyfile(f'{database_loc}/{database_name}', f'{database_loc}/backup_{database_name}')
         with open(f'{database_loc}/{database_name}', 'wb') as handle:
             pickle.dump(visitorCoordinates, handle, protocol=pickle.HIGHEST_PROTOCOL)
         if os.path.exists(f'{database_loc}/backup_{database_ips}'):
             os.remove(f'{database_loc}/backup_{database_ips}')
-        shutil.copyfile(f'{database_loc}/{database_ips}', f'{database_loc}/backup_{database_ips}')
+        if os.path.exists(f'{database_loc}/{database_ips}'):
+            shutil.copyfile(f'{database_loc}/{database_ips}', f'{database_loc}/backup_{database_ips}')
         with open(f'{database_loc}/{database_ips}', 'wb') as handle:
             pickle.dump(ip_info, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
