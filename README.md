@@ -1,5 +1,6 @@
 # website-visitor-stat-app
 A Flask server app which tracks visitor IP location and updates unique visitor count that can be integrated in a website. 
+See the deplyoment here at [https://dutta-alankar.github.io/website-visitor-stat-app/](https://dutta-alankar.github.io/website-visitor-stat-app/).
 
 [![PyPI](https://img.shields.io/badge/requires-Python%20≥%203.10-blue?logo=python&logoColor=white)](https://www.python.org/downloads/release/python-310/)  
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/dutta-alankar/website-visitor-stat-app/main.svg)](https://results.pre-commit.ci/latest/github/dutta-alankar/website-visitor-stat-app/main)
