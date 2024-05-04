@@ -132,5 +132,11 @@ def send_visitor_info():
 def info():
     return 'Website visitor stat server!'
 
-if __name__ == '__main__':
-    app.run(debug=False, port=5000)
+production = False
+port = 5000
+if __name__ == "__main__":
+    if production:
+        from waitress import serve
+        serve(app, host=localhost, port=port)
+    else:
+        app.run(debug=False, port=port)
